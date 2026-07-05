@@ -4,6 +4,7 @@ import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.Player;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.item.Item;
 
 import me.residencenx.Main;
 import me.residencenx.model.Cuboid;
@@ -34,6 +35,7 @@ public class RegionCommand extends Command {
             player.sendMessage("§e/rg add <player>");
             player.sendMessage("§e/rg remove <player>");
             player.sendMessage("§e/rg flag <key> <true/false>");
+            player.sendMessage("§e/rg home <region>");
             return true;
         }
 
@@ -41,13 +43,13 @@ public class RegionCommand extends Command {
         // WAND
         // ======================
         if (args[0].equalsIgnoreCase("wand")) {
-            player.getInventory().addItem(cn.nukkit.item.Item.get(271));
+            player.getInventory().addItem(Item.get(271));
             player.sendMessage("§aТы получил топор");
             return true;
         }
 
         // ======================
-        // CREATE REGION
+        // CREATE
         // ======================
         if (args[0].equalsIgnoreCase("create")) {
 
@@ -107,7 +109,6 @@ public class RegionCommand extends Command {
             player.sendMessage("§eВладелец: §f" + region.getOwner());
             player.sendMessage("§eУчастников: §f" + region.getMembers().size());
             player.sendMessage("§eФлаги: §f" + region.getFlags());
-
             return true;
         }
 
@@ -215,6 +216,36 @@ public class RegionCommand extends Command {
             region.setFlag(key, value);
 
             player.sendMessage("§aФлаг " + key + " = " + value);
+            return true;
+        }
+
+        // ======================
+        // HOME
+        // ======================
+        if (args[0].equalsIgnoreCase("home")) {
+
+            if (args.length < 2) {
+                player.sendMessage("§c/rg home <region>");
+                return true;
+            }
+
+            Region region = Main.getInstance()
+                    .getRegionManager()
+                    .getRegion(args[1]);
+
+            if (region == null) {
+                player.sendMessage("§cРегион не найден");
+                return true;
+            }
+
+            if (!region.hasAccess(player.getUniqueId())) {
+                player.sendMessage("§cНет доступа");
+                return true;
+            }
+
+            player.teleport(region.getHome());
+
+            player.sendMessage("§aТелепорт в регион " + region.getName());
             return true;
         }
 
