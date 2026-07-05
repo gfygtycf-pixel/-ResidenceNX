@@ -1,5 +1,7 @@
 package me.residencenx.model;
 
+import cn.nukkit.math.Vector3;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;
@@ -12,10 +14,11 @@ public class Region {
     private UUID owner;
     private Cuboid cuboid;
 
+    private Vector3 home;
+
     private HashSet<String> members = new HashSet<>();
     private HashSet<String> owners = new HashSet<>();
 
-    // 📌 ФЛАГИ
     private HashMap<String, Boolean> flags = new HashMap<>();
 
     public Region(String name, String world, UUID owner, Cuboid cuboid) {
@@ -32,7 +35,14 @@ public class Region {
         flags.put("pvp", false);
         flags.put("container", true);
         flags.put("use", true);
+
+        // 📌 home по умолчанию
+        this.home = cuboid.getMin();
     }
+
+    // =====================
+    // BASIC INFO
+    // =====================
 
     public String getName() {
         return name;
@@ -48,6 +58,18 @@ public class Region {
 
     public Cuboid getCuboid() {
         return cuboid;
+    }
+
+    // =====================
+    // HOME
+    // =====================
+
+    public Vector3 getHome() {
+        return home;
+    }
+
+    public void setHome(Vector3 home) {
+        this.home = home;
     }
 
     // =====================
