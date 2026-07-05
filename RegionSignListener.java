@@ -12,18 +12,17 @@ import me.residencenx.model.Region;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class RegionSignListener implements Listener {
 
-    // временное хранение продаж
+    // временное хранение цен (можно позже заменить на storage)
     private final Map<String, Integer> prices = new HashMap<>();
 
-    // ======================
+    // =========================
     // СОЗДАНИЕ ТАБЛИЧКИ
-    // ======================
+    // =========================
     @EventHandler
-    public void onSign(SignChangeEvent event) {
+    public void onSignChange(SignChangeEvent event) {
 
         Player player = event.getPlayer();
 
@@ -34,10 +33,12 @@ public class RegionSignListener implements Listener {
         if (!"[RG]".equalsIgnoreCase(line0)) return;
 
         String regionName = event.getLine(1);
+        String priceLine = event.getLine(2);
+
         int price;
 
         try {
-            price = Integer.parseInt(event.getLine(2));
+            price = Integer.parseInt(priceLine);
         } catch (Exception e) {
             player.sendMessage("§cЦена должна быть числом");
             return;
@@ -57,7 +58,7 @@ public class RegionSignListener implements Listener {
             return;
         }
 
-        prices.put(regionName, price);
+        prices.put(regionName.toLowerCase(), price);
 
         event.setLine(0, "§6[Продажа]");
         event.setLine(1, regionName);
@@ -66,26 +67,30 @@ public class RegionSignListener implements Listener {
         player.sendMessage("§aРегион выставлен на продажу");
     }
 
-    // ======================
+    // =========================
     // ПОКУПКА
-    // ======================
+    // =========================
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
 
         if (event.getBlock() == null) return;
 
-        if (!(event.getBlock().getLevel().getBlockEntity(event.getBlock().getLocation()) instanceof BlockEntitySign)) return;
+        if (!(event.getBlock().getLevel().getBlockEntity(event.getBlock().getLocation()) instanceof BlockEntitySign)) {
+            return;
+        }
 
         BlockEntitySign sign = (BlockEntitySign) event.getBlock().getLevel()
                 .getBlockEntity(event.getBlock().getLocation());
 
-        String line0 = sign.getText()[0];
+        String[] lines = sign.getText();
 
-        if (!line0.contains("[Продажа]")) return;
+        if (lines.length == 0 || lines[0] == null) return;
+
+        if (!lines[0].contains("[Продажа]")) return;
 
         Player player = event.getPlayer();
 
-        String regionName = sign.getText()[1].replace("§6", "").replace("§a", "");
+        String regionName = lines[1].replace("§6", "").replace("§a", "").toLowerCase();
 
         Region region = Main.getInstance()
                 .getRegionManager()
@@ -98,11 +103,26 @@ public class RegionSignListener implements Listener {
 
         int price = prices.getOrDefault(regionName, 0);
 
-        // 💡 тут позже подключим EconomyAPI
-        player.sendMessage("§eПокупка региона за " + price + "$ (экономика будет подключена позже)");
+        double money = Main.getInstance().getEconomy().myMoney(player);
 
+        if (money < price) {
+            player.sendMessage("§cНедостаточно денег");
+            return;
+        }
+
+        // списание
+        Main.getInstance().getEconomy().reduceMoney(player, price);
+
+        // перевод владельцу
+        Player owner = player.getServer().getPlayer(region.getOwner().toString());
+
+        if (owner != null) {
+            Main.getInstance().getEconomy().addMoney(owner, price);
+        }
+
+        // смена владельца
         region.addOwner(player.getUniqueId());
 
-        player.sendMessage("§aТы купил регион!");
+        player.sendMessage("§aТы купил регион за " + price + "$");
     }
 }
