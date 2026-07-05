@@ -1,5 +1,6 @@
 package me.residencenx.model;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -14,6 +15,9 @@ public class Region {
     private HashSet<String> members = new HashSet<>();
     private HashSet<String> owners = new HashSet<>();
 
+    // 📌 ФЛАГИ
+    private HashMap<String, Boolean> flags = new HashMap<>();
+
     public Region(String name, String world, UUID owner, Cuboid cuboid) {
         this.name = name;
         this.world = world;
@@ -21,6 +25,13 @@ public class Region {
         this.cuboid = cuboid;
 
         this.owners.add(owner.toString());
+
+        // 📌 дефолтные флаги
+        flags.put("build", true);
+        flags.put("destroy", true);
+        flags.put("pvp", false);
+        flags.put("container", true);
+        flags.put("use", true);
     }
 
     public String getName() {
@@ -38,6 +49,10 @@ public class Region {
     public Cuboid getCuboid() {
         return cuboid;
     }
+
+    // =====================
+    // ACCESS SYSTEM
+    // =====================
 
     public boolean isOwner(UUID uuid) {
         return owners.contains(uuid.toString());
@@ -65,5 +80,21 @@ public class Region {
 
     public void removeOwner(UUID uuid) {
         owners.remove(uuid.toString());
+    }
+
+    // =====================
+    // FLAGS
+    // =====================
+
+    public boolean getFlag(String key) {
+        return flags.getOrDefault(key.toLowerCase(), true);
+    }
+
+    public void setFlag(String key, boolean value) {
+        flags.put(key.toLowerCase(), value);
+    }
+
+    public HashMap<String, Boolean> getFlags() {
+        return flags;
     }
 }
