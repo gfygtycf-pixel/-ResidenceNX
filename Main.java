@@ -9,6 +9,7 @@ import me.residencenx.storage.RegionStorage;
 import me.residencenx.listener.PlayerListener;
 import me.residencenx.listener.BlockListener;
 import me.residencenx.listener.RegionSignListener;
+import me.residencenx.listener.RegionGuiListener;
 
 import me.residencenx.command.RegionCommand;
 
@@ -58,27 +59,27 @@ public class Main extends PluginBase {
 
         instance = this;
 
-        // managers
+        // 🧠 managers
         this.selectionManager = new SelectionManager();
         this.regionManager = new RegionManager();
 
-        // storage
+        // 💾 storage
         this.regionStorage = new RegionStorage();
 
         saveDefaultConfig();
 
-        // load regions
         this.regionStorage.loadAll();
 
-        // economy
+        // 💰 economy
         this.economy = EconomyAPI.getInstance();
 
-        // listeners
+        // 🎧 listeners
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         getServer().getPluginManager().registerEvents(new BlockListener(), this);
         getServer().getPluginManager().registerEvents(new RegionSignListener(), this);
+        getServer().getPluginManager().registerEvents(new RegionGuiListener(), this);
 
-        // command
+        // 💬 command
         this.getServer().getCommandMap().register(
                 "rg",
                 new RegionCommand()
