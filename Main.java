@@ -10,6 +10,8 @@ import me.residencenx.listener.BlockListener;
 
 import me.residencenx.command.RegionCommand;
 
+import me.residencenx.storage.RegionStorage;
+
 public class Main extends PluginBase {
 
     private static Main instance;
