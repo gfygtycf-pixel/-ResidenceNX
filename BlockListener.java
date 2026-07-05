@@ -52,9 +52,9 @@ public class BlockListener implements Listener {
 
         if (region == null) return;
 
-        if (!region.isOwner(player.getUniqueId()) && !region.isMember(player.getUniqueId())) {
+        if (!region.hasAccess(player.getUniqueId())) {
             event.setCancelled(true);
-            player.sendMessage("§c[ResidenceNX] Строить здесь нельзя (чужой регион)");
+            player.sendMessage("§c[ResidenceNX] Ломать здесь нельзя (чужой регион)");
         }
     }
 }
