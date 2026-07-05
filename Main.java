@@ -18,6 +18,7 @@ public class Main extends PluginBase {
 
     private SelectionManager selectionManager;
     private RegionManager regionManager;
+    private RegionStorage regionStorage;
 
     public static Main getInstance() {
         return instance;
@@ -31,6 +32,10 @@ public class Main extends PluginBase {
         return regionManager;
     }
 
+    public RegionStorage getRegionStorage() {
+        return regionStorage;
+    }
+
     @Override
     public void onEnable() {
 
@@ -40,10 +45,15 @@ public class Main extends PluginBase {
         this.selectionManager = new SelectionManager();
         this.regionManager = new RegionManager();
 
-        // конфиг
+        // storage
+        this.regionStorage = new RegionStorage();
+
         saveDefaultConfig();
 
-        // слушатели
+        // загрузка регионов
+        this.regionStorage.loadAll();
+
+        // listeners
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         getServer().getPluginManager().registerEvents(new BlockListener(), this);
 
@@ -58,6 +68,12 @@ public class Main extends PluginBase {
 
     @Override
     public void onDisable() {
+
+        // сохранение регионов
+        if (regionStorage != null) {
+            regionStorage.saveAll();
+        }
+
         getLogger().info("ResidenceNX disabled");
     }
 }
