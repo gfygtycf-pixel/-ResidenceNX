@@ -5,12 +5,13 @@ import cn.nukkit.plugin.PluginBase;
 import me.residencenx.manager.RegionManager;
 import me.residencenx.manager.SelectionManager;
 
+import me.residencenx.storage.RegionStorage;
+
 import me.residencenx.listener.PlayerListener;
 import me.residencenx.listener.BlockListener;
+import me.residencenx.listener.RegionSignListener;
 
 import me.residencenx.command.RegionCommand;
-
-import me.residencenx.storage.RegionStorage;
 
 public class Main extends PluginBase {
 
@@ -45,17 +46,18 @@ public class Main extends PluginBase {
         this.selectionManager = new SelectionManager();
         this.regionManager = new RegionManager();
 
-        // storage
+        // storage (regions.yml)
         this.regionStorage = new RegionStorage();
 
         saveDefaultConfig();
 
-        // загрузка регионов
+        // загрузка регионов при старте
         this.regionStorage.loadAll();
 
         // listeners
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         getServer().getPluginManager().registerEvents(new BlockListener(), this);
+        getServer().getPluginManager().registerEvents(new RegionSignListener(), this);
 
         // команда /rg
         this.getServer().getCommandMap().register(
