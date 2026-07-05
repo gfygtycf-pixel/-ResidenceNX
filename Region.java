@@ -9,7 +9,6 @@ public class Region {
     private String world;
 
     private UUID owner;
-
     private Cuboid cuboid;
 
     private HashSet<String> members = new HashSet<>();
@@ -40,14 +39,6 @@ public class Region {
         return cuboid;
     }
 
-    public HashSet<String> getMembers() {
-        return members;
-    }
-
-    public HashSet<String> getOwners() {
-        return owners;
-    }
-
     public boolean isOwner(UUID uuid) {
         return owners.contains(uuid.toString());
     }
@@ -56,8 +47,8 @@ public class Region {
         return members.contains(uuid.toString());
     }
 
-    public boolean contains(java.util.Vector3 pos) {
-        return cuboid.contains(pos);
+    public boolean hasAccess(UUID uuid) {
+        return isOwner(uuid) || isMember(uuid);
     }
 
     public void addMember(UUID uuid) {
