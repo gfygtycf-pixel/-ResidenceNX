@@ -33,17 +33,22 @@ public class RegionCommand extends Command {
             player.sendMessage("§e/rg info");
             player.sendMessage("§e/rg add <player>");
             player.sendMessage("§e/rg remove <player>");
+            player.sendMessage("§e/rg flag <key> <true/false>");
             return true;
         }
 
-        // /rg wand
+        // ======================
+        // WAND
+        // ======================
         if (args[0].equalsIgnoreCase("wand")) {
             player.getInventory().addItem(cn.nukkit.item.Item.get(271));
             player.sendMessage("§aТы получил топор");
             return true;
         }
 
-        // /rg create <name>
+        // ======================
+        // CREATE REGION
+        // ======================
         if (args[0].equalsIgnoreCase("create")) {
 
             if (args.length < 2) {
@@ -74,21 +79,17 @@ public class RegionCommand extends Command {
                 return true;
             }
 
-            Region region = new Region(
-                    name,
-                    world,
-                    player.getUniqueId(),
-                    cuboid
-            );
+            Region region = new Region(name, world, player.getUniqueId(), cuboid);
 
             Main.getInstance().getRegionManager().addRegion(region);
 
             player.sendMessage("§aРегион создан: " + name);
-
             return true;
         }
 
-        // /rg info
+        // ======================
+        // INFO
+        // ======================
         if (args[0].equalsIgnoreCase("info")) {
 
             Region region = Main.getInstance()
@@ -103,14 +104,16 @@ public class RegionCommand extends Command {
             player.sendMessage("§6=== Регион ===");
             player.sendMessage("§eНазвание: §f" + region.getName());
             player.sendMessage("§eМир: §f" + region.getWorld());
-            player.sendMessage("§eВладелец: §f" + region.getOwner().toString());
+            player.sendMessage("§eВладелец: §f" + region.getOwner());
             player.sendMessage("§eУчастников: §f" + region.getMembers().size());
-            player.sendMessage("§eСовладельцев: §f" + region.getOwners().size());
+            player.sendMessage("§eФлаги: §f" + region.getFlags());
 
             return true;
         }
 
-        // /rg add <player>
+        // ======================
+        // ADD MEMBER
+        // ======================
         if (args[0].equalsIgnoreCase("add")) {
 
             if (args.length < 2) {
@@ -145,7 +148,9 @@ public class RegionCommand extends Command {
             return true;
         }
 
-        // /rg remove <player>
+        // ======================
+        // REMOVE MEMBER
+        // ======================
         if (args[0].equalsIgnoreCase("remove")) {
 
             if (args.length < 2) {
@@ -177,6 +182,39 @@ public class RegionCommand extends Command {
             region.removeMember(target.getUniqueId());
 
             player.sendMessage("§cИгрок удалён");
+            return true;
+        }
+
+        // ======================
+        // FLAGS
+        // ======================
+        if (args[0].equalsIgnoreCase("flag")) {
+
+            if (args.length < 3) {
+                player.sendMessage("§c/rg flag <key> <true/false>");
+                return true;
+            }
+
+            Region region = Main.getInstance()
+                    .getRegionManager()
+                    .getRegionAt(player.getLevel().getName(), player.getLocation());
+
+            if (region == null) {
+                player.sendMessage("§cТы не в регионе");
+                return true;
+            }
+
+            if (!region.isOwner(player.getUniqueId())) {
+                player.sendMessage("§cТолько владелец");
+                return true;
+            }
+
+            String key = args[1];
+            boolean value = Boolean.parseBoolean(args[2]);
+
+            region.setFlag(key, value);
+
+            player.sendMessage("§aФлаг " + key + " = " + value);
             return true;
         }
 
