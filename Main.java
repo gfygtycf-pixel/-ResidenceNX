@@ -32,7 +32,7 @@ public class Main extends PluginBase {
 
         this.selectionManager = new SelectionManager();
         this.regionManager = new RegionManager();
-
+        this.getServer().getCommandMap().register("rg", new me.residencenx.command.RegionCommand());
         saveDefaultConfig();
 
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
