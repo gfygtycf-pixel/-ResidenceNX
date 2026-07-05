@@ -12,47 +12,85 @@ import me.residencenx.model.Region;
 
 public class RegionGuiListener implements Listener {
 
-    private final String TITLE = "§6Region Menu";
+    private final String TITLE_MAIN = "§6Region Menu";
+    private final String TITLE_FLAGS = "§eRegion Flags";
+    private final String TITLE_MEMBERS = "§bRegion Members";
 
-    // =====================
-    // ОТКРЫТИЕ МЕНЮ
-    // =====================
+    // =========================
+    // OPEN MAIN MENU
+    // =========================
     public void open(Player player, Region region) {
 
-        Inventory inv = cn.nukkit.inventory.InventoryType.CHEST
-                .getDefaultSize() > 0
-                ? player.getServer().createInventory(player, 27, TITLE)
-                : null;
+        Inventory inv = player.getServer().createInventory(player, 27, TITLE_MAIN);
 
-        if (inv == null) return;
-
-        // 🏠 HOME
         Item home = Item.get(Item.COMPASS);
         home.setCustomName("§aTeleport Home");
 
-        // 👥 ADD
-        Item add = Item.get(Item.EMERALD);
-        add.setCustomName("§eAdd Member");
+        Item flags = Item.get(Item.REDSTONE);
+        flags.setCustomName("§eEdit Flags");
 
-        // ❌ REMOVE
-        Item remove = Item.get(Item.REDSTONE);
-        remove.setCustomName("§cRemove Member");
+        Item members = Item.get(Item.SKULL);
+        members.setCustomName("§bManage Members");
 
-        // ⚙ INFO
         Item info = Item.get(Item.PAPER);
-        info.setCustomName("§bInfo");
+        info.setCustomName("§fRegion Info");
 
         inv.setItem(11, home);
-        inv.setItem(13, info);
-        inv.setItem(15, add);
-        inv.setItem(22, remove);
+        inv.setItem(13, flags);
+        inv.setItem(15, members);
+        inv.setItem(22, info);
 
         player.addWindow(inv);
     }
 
-    // =====================
-    // КЛИКИ
-    // =====================
+    // =========================
+    // FLAGS MENU
+    // =========================
+    private void openFlags(Player player, Region region) {
+
+        Inventory inv = player.getServer().createInventory(player, 27, TITLE_FLAGS);
+
+        inv.setItem(10, makeFlag("build", region));
+        inv.setItem(11, makeFlag("destroy", region));
+        inv.setItem(12, makeFlag("pvp", region));
+        inv.setItem(13, makeFlag("use", region));
+        inv.setItem(14, makeFlag("container", region));
+
+        player.addWindow(inv);
+    }
+
+    private Item makeFlag(String key, Region region) {
+
+        boolean value = region.getFlag(key);
+
+        Item item = Item.get(Item.STAINED_GLASS_PANE, value ? 5 : 14);
+        item.setCustomName("§e" + key + " §7: " + (value ? "§aON" : "§cOFF"));
+
+        return item;
+    }
+
+    // =========================
+    // MEMBERS MENU
+    // =========================
+    private void openMembers(Player player, Region region) {
+
+        Inventory inv = player.getServer().createInventory(player, 27, TITLE_MEMBERS);
+
+        Item add = Item.get(Item.EMERALD);
+        add.setCustomName("§aAdd Member");
+
+        Item remove = Item.get(Item.REDSTONE);
+        remove.setCustomName("§cRemove Member");
+
+        inv.setItem(11, add);
+        inv.setItem(15, remove);
+
+        player.addWindow(inv);
+    }
+
+    // =========================
+    // CLICK HANDLER
+    // =========================
     @EventHandler
     public void onClick(InventoryClickEvent event) {
 
@@ -60,9 +98,10 @@ public class RegionGuiListener implements Listener {
 
         Player player = (Player) event.getWhoClicked();
 
-        if (!event.getInventory().getTitle().equals(TITLE)) return;
+        String title = event.getInventory().getTitle();
+        Item item = event.getCurrentItem();
 
-        event.setCancelled(true);
+        if (item == null || item.getId() == 0) return;
 
         Region region = Main.getInstance()
                 .getRegionManager()
@@ -70,34 +109,59 @@ public class RegionGuiListener implements Listener {
 
         if (region == null) return;
 
-        Item item = event.getCurrentItem();
-
-        if (item == null || item.getId() == 0) return;
+        event.setCancelled(true);
 
         String name = item.hasCustomName() ? item.getCustomName() : "";
 
-        // 🏠 HOME
-        if (name.contains("Teleport Home")) {
-            player.teleport(region.getHome());
-            player.sendMessage("§aТелепорт в регион");
+        // ================= MAIN =================
+        if (title.equals(TITLE_MAIN)) {
+
+            if (name.contains("Teleport Home")) {
+                player.teleport(region.getHome());
+            }
+
+            if (name.contains("Edit Flags")) {
+                openFlags(player, region);
+            }
+
+            if (name.contains("Manage Members")) {
+                openMembers(player, region);
+            }
+
+            if (name.contains("Region Info")) {
+                player.sendMessage("§6Region: §f" + region.getName());
+                player.sendMessage("§6Owner: §f" + region.getOwnerName());
+                player.sendMessage("§6Members: §f" + region.getMembers().size());
+            }
         }
 
-        // 👥 ADD (упрощённо)
-        if (name.contains("Add Member")) {
-            player.sendMessage("§eИспользуй: /rg add <player>");
+        // ================= FLAGS =================
+        if (title.equals(TITLE_FLAGS)) {
+
+            if (!region.isOwner(player.getUniqueId())) return;
+
+            String key = name.replace("§e", "").split(" ")[0];
+
+            boolean current = region.getFlag(key);
+            region.setFlag(key, !current);
+
+            player.sendMessage("§aFlag " + key + " = " + !current);
+
+            openFlags(player, region);
         }
 
-        // ❌ REMOVE
-        if (name.contains("Remove Member")) {
-            player.sendMessage("§eИспользуй: /rg remove <player>");
-        }
+        // ================= MEMBERS =================
+        if (title.equals(TITLE_MEMBERS)) {
 
-        // ⚙ INFO
-        if (name.contains("Info")) {
-            player.sendMessage("§6=== REGION INFO ===");
-            player.sendMessage("§eName: §f" + region.getName());
-            player.sendMessage("§eOwner: §f" + region.getOwnerName());
-            player.sendMessage("§eMembers: §f" + region.getMembers().size());
+            if (!region.isOwner(player.getUniqueId())) return;
+
+            if (name.contains("Add")) {
+                player.sendMessage("§eИспользуй: /rg add <player>");
+            }
+
+            if (name.contains("Remove")) {
+                player.sendMessage("§eИспользуй: /rg remove <player>");
+            }
         }
     }
 }
