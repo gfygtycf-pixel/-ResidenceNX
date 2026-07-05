@@ -11,7 +11,10 @@ public class Region {
     private String name;
     private String world;
 
-    private UUID owner;
+    // 👑 владелец (правильно: UUID + имя)
+    private UUID ownerUUID;
+    private String ownerName;
+
     private Cuboid cuboid;
 
     private Vector3 home;
@@ -21,27 +24,28 @@ public class Region {
 
     private HashMap<String, Boolean> flags = new HashMap<>();
 
-    public Region(String name, String world, UUID owner, Cuboid cuboid) {
+    public Region(String name, String world, UUID ownerUUID, String ownerName, Cuboid cuboid) {
         this.name = name;
         this.world = world;
-        this.owner = owner;
+        this.ownerUUID = ownerUUID;
+        this.ownerName = ownerName;
         this.cuboid = cuboid;
 
-        this.owners.add(owner.toString());
+        this.owners.add(ownerUUID.toString());
 
-        // 📌 дефолтные флаги
+        // 🔧 дефолтные флаги
         flags.put("build", true);
         flags.put("destroy", true);
         flags.put("pvp", false);
         flags.put("container", true);
         flags.put("use", true);
 
-        // 📌 home по умолчанию
+        // 🏠 home по умолчанию
         this.home = cuboid.getMin();
     }
 
     // =====================
-    // BASIC INFO
+    // BASIC
     // =====================
 
     public String getName() {
@@ -52,8 +56,12 @@ public class Region {
         return world;
     }
 
-    public UUID getOwner() {
-        return owner;
+    public UUID getOwnerUUID() {
+        return ownerUUID;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
     }
 
     public Cuboid getCuboid() {
@@ -73,7 +81,7 @@ public class Region {
     }
 
     // =====================
-    // ACCESS SYSTEM
+    // ACCESS
     // =====================
 
     public boolean isOwner(UUID uuid) {
