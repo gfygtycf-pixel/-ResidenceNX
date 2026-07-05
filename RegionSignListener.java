@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class RegionSignListener implements Listener {
 
-    // временное хранение цен (можно позже заменить на storage)
+    // 💰 временное хранение цен (позже можно вынести в storage)
     private final Map<String, Integer> prices = new HashMap<>();
 
     // =========================
@@ -28,9 +28,7 @@ public class RegionSignListener implements Listener {
 
         if (!player.hasPermission("residencenx.create.sign")) return;
 
-        String line0 = event.getLine(0);
-
-        if (!"[RG]".equalsIgnoreCase(line0)) return;
+        if (!"[RG]".equalsIgnoreCase(event.getLine(0))) return;
 
         String regionName = event.getLine(1);
         String priceLine = event.getLine(2);
@@ -68,7 +66,7 @@ public class RegionSignListener implements Listener {
     }
 
     // =========================
-    // ПОКУПКА
+    // ПОКУПКА РЕГИОНА
     // =========================
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
@@ -84,7 +82,7 @@ public class RegionSignListener implements Listener {
 
         String[] lines = sign.getText();
 
-        if (lines.length == 0 || lines[0] == null) return;
+        if (lines == null || lines.length == 0) return;
 
         if (!lines[0].contains("[Продажа]")) return;
 
@@ -110,17 +108,15 @@ public class RegionSignListener implements Listener {
             return;
         }
 
-        // списание
+        // 💰 списание денег у покупателя
         Main.getInstance().getEconomy().reduceMoney(player, price);
 
-        // перевод владельцу
-        Player owner = player.getServer().getPlayer(region.getOwner().toString());
+        // 💰 выдача денег продавцу (по имени, безопасно)
+        String ownerName = region.getOwnerName();
 
-        if (owner != null) {
-            Main.getInstance().getEconomy().addMoney(owner, price);
-        }
+        Main.getInstance().getEconomy().addMoney(ownerName, price);
 
-        // смена владельца
+        // 👑 передача региона новому владельцу
         region.addOwner(player.getUniqueId());
 
         player.sendMessage("§aТы купил регион за " + price + "$");
