@@ -1,4 +1,5 @@
 package me.residencenx;
+package me.residencenx.listener;
 
 import cn.nukkit.plugin.PluginBase;
 import me.residencenx.manager.RegionManager;
