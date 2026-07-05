@@ -35,6 +35,7 @@ public class Main extends PluginBase {
         saveDefaultConfig();
 
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
+        getServer().getPluginManager().registerEvents(new BlockListener(), this);
 
         getLogger().info("ResidenceNX enabled");
     }
