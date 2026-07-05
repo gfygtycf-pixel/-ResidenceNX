@@ -28,16 +28,18 @@ public class RegionCommand extends Command {
         Player player = (Player) sender;
 
         if (args.length == 0) {
-            player.sendMessage("§e/rg wand, create <name>");
+            player.sendMessage("§e/rg wand");
+            player.sendMessage("§e/rg create <name>");
+            player.sendMessage("§e/rg info");
+            player.sendMessage("§e/rg add <player>");
+            player.sendMessage("§e/rg remove <player>");
             return true;
         }
 
         // /rg wand
         if (args[0].equalsIgnoreCase("wand")) {
-            player.getInventory().addItem(
-                    cn.nukkit.item.Item.get(271)
-            );
-            player.sendMessage("§aТы получил топор для выделения");
+            player.getInventory().addItem(cn.nukkit.item.Item.get(271));
+            player.sendMessage("§aТы получил топор");
             return true;
         }
 
@@ -45,7 +47,7 @@ public class RegionCommand extends Command {
         if (args[0].equalsIgnoreCase("create")) {
 
             if (args.length < 2) {
-                player.sendMessage("§cИспользование: /rg create <name>");
+                player.sendMessage("§c/rg create <name>");
                 return true;
             }
 
@@ -67,7 +69,6 @@ public class RegionCommand extends Command {
 
             Cuboid cuboid = new Cuboid(pos1, pos2);
 
-            // проверка пересечений
             if (Main.getInstance().getRegionManager().overlaps(cuboid, world)) {
                 player.sendMessage("§cТут уже есть регион");
                 return true;
@@ -80,15 +81,105 @@ public class RegionCommand extends Command {
                     cuboid
             );
 
-            Main.getInstance()
-                    .getRegionManager()
-                    .addRegion(region);
+            Main.getInstance().getRegionManager().addRegion(region);
 
             player.sendMessage("§aРегион создан: " + name);
 
             return true;
         }
 
-        return false;
+        // /rg info
+        if (args[0].equalsIgnoreCase("info")) {
+
+            Region region = Main.getInstance()
+                    .getRegionManager()
+                    .getRegionAt(player.getLevel().getName(), player.getLocation());
+
+            if (region == null) {
+                player.sendMessage("§cТы не в регионе");
+                return true;
+            }
+
+            player.sendMessage("§6=== Регион ===");
+            player.sendMessage("§eНазвание: §f" + region.getName());
+            player.sendMessage("§eМир: §f" + region.getWorld());
+            player.sendMessage("§eВладелец: §f" + region.getOwner().toString());
+            player.sendMessage("§eУчастников: §f" + region.getMembers().size());
+            player.sendMessage("§eСовладельцев: §f" + region.getOwners().size());
+
+            return true;
+        }
+
+        // /rg add <player>
+        if (args[0].equalsIgnoreCase("add")) {
+
+            if (args.length < 2) {
+                player.sendMessage("§c/rg add <player>");
+                return true;
+            }
+
+            Region region = Main.getInstance()
+                    .getRegionManager()
+                    .getRegionAt(player.getLevel().getName(), player.getLocation());
+
+            if (region == null) {
+                player.sendMessage("§cТы не в регионе");
+                return true;
+            }
+
+            if (!region.isOwner(player.getUniqueId())) {
+                player.sendMessage("§cТолько владелец");
+                return true;
+            }
+
+            Player target = player.getServer().getPlayer(args[1]);
+
+            if (target == null) {
+                player.sendMessage("§cИгрок не найден");
+                return true;
+            }
+
+            region.addMember(target.getUniqueId());
+
+            player.sendMessage("§aИгрок добавлен");
+            return true;
+        }
+
+        // /rg remove <player>
+        if (args[0].equalsIgnoreCase("remove")) {
+
+            if (args.length < 2) {
+                player.sendMessage("§c/rg remove <player>");
+                return true;
+            }
+
+            Region region = Main.getInstance()
+                    .getRegionManager()
+                    .getRegionAt(player.getLevel().getName(), player.getLocation());
+
+            if (region == null) {
+                player.sendMessage("§cТы не в регионе");
+                return true;
+            }
+
+            if (!region.isOwner(player.getUniqueId())) {
+                player.sendMessage("§cТолько владелец");
+                return true;
+            }
+
+            Player target = player.getServer().getPlayer(args[1]);
+
+            if (target == null) {
+                player.sendMessage("§cИгрок не найден");
+                return true;
+            }
+
+            region.removeMember(target.getUniqueId());
+
+            player.sendMessage("§cИгрок удалён");
+            return true;
+        }
+
+        return true;
     }
 }
