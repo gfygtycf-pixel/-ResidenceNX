@@ -4,7 +4,6 @@ import cn.nukkit.plugin.PluginBase;
 
 import me.residencenx.manager.RegionManager;
 import me.residencenx.manager.SelectionManager;
-
 import me.residencenx.storage.RegionStorage;
 
 import me.residencenx.listener.PlayerListener;
@@ -12,6 +11,8 @@ import me.residencenx.listener.BlockListener;
 import me.residencenx.listener.RegionSignListener;
 
 import me.residencenx.command.RegionCommand;
+
+import onebone.economyapi.EconomyAPI;
 
 public class Main extends PluginBase {
 
@@ -21,10 +22,18 @@ public class Main extends PluginBase {
     private RegionManager regionManager;
     private RegionStorage regionStorage;
 
+    private EconomyAPI economy;
+
+    // =====================
+    // INSTANCE
+    // =====================
     public static Main getInstance() {
         return instance;
     }
 
+    // =====================
+    // GETTERS
+    // =====================
     public SelectionManager getSelectionManager() {
         return selectionManager;
     }
@@ -37,29 +46,39 @@ public class Main extends PluginBase {
         return regionStorage;
     }
 
+    public EconomyAPI getEconomy() {
+        return economy;
+    }
+
+    // =====================
+    // ENABLE
+    // =====================
     @Override
     public void onEnable() {
 
         instance = this;
 
-        // менеджеры
+        // managers
         this.selectionManager = new SelectionManager();
         this.regionManager = new RegionManager();
 
-        // storage (regions.yml)
+        // storage
         this.regionStorage = new RegionStorage();
 
         saveDefaultConfig();
 
-        // загрузка регионов при старте
+        // load regions
         this.regionStorage.loadAll();
+
+        // economy
+        this.economy = EconomyAPI.getInstance();
 
         // listeners
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         getServer().getPluginManager().registerEvents(new BlockListener(), this);
         getServer().getPluginManager().registerEvents(new RegionSignListener(), this);
 
-        // команда /rg
+        // command
         this.getServer().getCommandMap().register(
                 "rg",
                 new RegionCommand()
@@ -68,10 +87,12 @@ public class Main extends PluginBase {
         getLogger().info("ResidenceNX enabled");
     }
 
+    // =====================
+    // DISABLE
+    // =====================
     @Override
     public void onDisable() {
 
-        // сохранение регионов
         if (regionStorage != null) {
             regionStorage.saveAll();
         }
