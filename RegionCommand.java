@@ -10,6 +10,7 @@ import me.residencenx.Main;
 import me.residencenx.model.Cuboid;
 import me.residencenx.model.Region;
 import me.residencenx.model.Selection;
+import me.residencenx.listener.RegionGuiListener;
 
 public class RegionCommand extends Command {
 
@@ -36,6 +37,7 @@ public class RegionCommand extends Command {
             player.sendMessage("§e/rg remove <player>");
             player.sendMessage("§e/rg flag <key> <true/false>");
             player.sendMessage("§e/rg home <region>");
+            player.sendMessage("§e/rg gui");
             return true;
         }
 
@@ -49,7 +51,7 @@ public class RegionCommand extends Command {
         }
 
         // =====================
-        // CREATE REGION
+        // CREATE
         // =====================
         if (args[0].equalsIgnoreCase("create")) {
 
@@ -109,12 +111,12 @@ public class RegionCommand extends Command {
                 return true;
             }
 
-            player.sendMessage("§6=== Регион ===");
-            player.sendMessage("§eНазвание: §f" + region.getName());
-            player.sendMessage("§eМир: §f" + region.getWorld());
-            player.sendMessage("§eВладелец: §f" + region.getOwnerName());
-            player.sendMessage("§eУчастников: §f" + region.getMembers().size());
-            player.sendMessage("§eФлаги: §f" + region.getFlags());
+            player.sendMessage("§6=== REGION ===");
+            player.sendMessage("§eName: §f" + region.getName());
+            player.sendMessage("§eWorld: §f" + region.getWorld());
+            player.sendMessage("§eOwner: §f" + region.getOwnerName());
+            player.sendMessage("§eMembers: §f" + region.getMembers().size());
+            player.sendMessage("§eFlags: §f" + region.getFlags());
             return true;
         }
 
@@ -252,6 +254,24 @@ public class RegionCommand extends Command {
             player.teleport(region.getHome());
 
             player.sendMessage("§aТелепорт в регион " + region.getName());
+            return true;
+        }
+
+        // =====================
+        // GUI
+        // =====================
+        if (args[0].equalsIgnoreCase("gui")) {
+
+            Region region = Main.getInstance()
+                    .getRegionManager()
+                    .getRegionAt(player.getLevel().getName(), player.getLocation());
+
+            if (region == null) {
+                player.sendMessage("§cТы не в регионе");
+                return true;
+            }
+
+            new RegionGuiListener().open(player, region);
             return true;
         }
 
