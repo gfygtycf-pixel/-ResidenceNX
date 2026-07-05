@@ -23,21 +23,21 @@ public class RegionCommand extends Command {
     public boolean execute(CommandSender sender, String label, String[] args) {
 
         if (!(sender instanceof Player)) {
-            sender.sendMessage("Only players");
+            sender.sendMessage("Only players can use this command");
             return true;
         }
 
         Player player = (Player) sender;
 
         if (args.length == 0) {
-            player.sendMessage("§e/rg wand");
-            player.sendMessage("§e/rg create <name>");
-            player.sendMessage("§e/rg info");
-            player.sendMessage("§e/rg add <player>");
-            player.sendMessage("§e/rg remove <player>");
-            player.sendMessage("§e/rg flag <key> <true/false>");
-            player.sendMessage("§e/rg home <region>");
-            player.sendMessage("§e/rg gui");
+            player.sendMessage("§6/rg wand");
+            player.sendMessage("§6/rg create <name>");
+            player.sendMessage("§6/rg info");
+            player.sendMessage("§6/rg add <player>");
+            player.sendMessage("§6/rg remove <player>");
+            player.sendMessage("§6/rg flag <key> <true/false>");
+            player.sendMessage("§6/rg home <region>");
+            player.sendMessage("§6/rg gui");
             return true;
         }
 
@@ -46,12 +46,12 @@ public class RegionCommand extends Command {
         // =====================
         if (args[0].equalsIgnoreCase("wand")) {
             player.getInventory().addItem(Item.get(271));
-            player.sendMessage("§aТы получил топор");
+            player.sendMessage("§aВы получили топор выделения");
             return true;
         }
 
         // =====================
-        // CREATE
+        // CREATE REGION
         // =====================
         if (args[0].equalsIgnoreCase("create")) {
 
@@ -67,7 +67,7 @@ public class RegionCommand extends Command {
                     .get(player.getUniqueId());
 
             if (sel == null || !sel.isComplete()) {
-                player.sendMessage("§cСначала выдели территорию");
+                player.sendMessage("§cСначала выдели регион");
                 return true;
             }
 
@@ -111,7 +111,7 @@ public class RegionCommand extends Command {
                 return true;
             }
 
-            player.sendMessage("§6=== REGION ===");
+            player.sendMessage("§6=== REGION INFO ===");
             player.sendMessage("§eName: §f" + region.getName());
             player.sendMessage("§eWorld: §f" + region.getWorld());
             player.sendMessage("§eOwner: §f" + region.getOwnerName());
@@ -153,7 +153,7 @@ public class RegionCommand extends Command {
 
             region.addMember(target.getUniqueId());
 
-            player.sendMessage("§aИгрок добавлен");
+            player.sendMessage("§aИгрок добавлен в регион");
             return true;
         }
 
@@ -190,7 +190,7 @@ public class RegionCommand extends Command {
 
             region.removeMember(target.getUniqueId());
 
-            player.sendMessage("§cИгрок удалён");
+            player.sendMessage("§cИгрок удалён из региона");
             return true;
         }
 
