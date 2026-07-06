@@ -1,0 +1,28 @@
+name: ResidenceNX
+
+main: me.residencenx.Main
+
+version: "0.1.0"
+
+api: ["1.0.0"]
+
+author: Evgo0
+
+load: POSTWORLD
+
+commands:
+
+  rg:
+    description: ResidenceNX
+    usage: "/rg"
+
+permissions:
+
+  residencenx.command:
+    default: true
+
+  residencenx.admin:
+    default: op
+
+  residencenx.bypass:
+    default: op
