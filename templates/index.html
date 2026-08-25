@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Элдория — Донат</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+
+<header class="hero">
+
+
+    <nav>
+
+        <div class="brand">
+            ⚔ ЭЛДОРИЯ
+        </div>
+
+
+        <a href="#shop">
+            МАГАЗИН
+        </a>
+
+    </nav>
+
+
+
+    <div class="hero-inner">
+
+        <div class="eyebrow">
+
+            СРЕДНЕВЕКОВЫЙ МИР ПРИКЛЮЧЕНИЙ
+
+        </div>
+
+
+        <h1>
+
+            ВЛАДЕЙ.<br>
+
+            <span>РАЗВИВАЙСЯ.</span><br>
+
+            СТАНЬ ЛЕГЕНДОЙ.
+
+        </h1>
+
+
+        <p>
+
+            Поддержи развитие Элдории
+            и получи новые возможности
+            в игре.
+
+        </p>
+
+
+        <a
+            class="gold-btn"
+            href="#shop"
+        >
+
+            ОТКРЫТЬ МАГАЗИН
+
+        </a>
+
+    </div>
+
+</header>
+
+
+
+<main id="shop">
+
+
+<!-- ========================= -->
+<!-- ПРИВИЛЕГИИ -->
+<!-- ========================= -->
+
+<section class="section">
+
+
+    <div class="section-title">
+
+        <span>01</span>
+
+        <h2>
+            ПРИВИЛЕГИИ
+        </h2>
+
+    </div>
+
+
+
+    <div class="grid">
+
+
+        {% for p in privileges %}
+
+
+        <article
+            class="card privilege {{ p.id }}"
+        >
+
+
+            <div class="icon">
+
+                {% if p.id == "baron" %}
+
+                    🛡️
+
+                {% elif p.id == "duke" %}
+
+                    ⚜️
+
+                {% else %}
+
+                    👑
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="tag">
+                ПРИВИЛЕГИЯ
+            </div>
+
+
+            <h3>
+                {{ p.name }}
+            </h3>
+
+
+            <p>
+                {{ p.description }}
+            </p>
+
+
+            <ul>
+
+                {% for feature in p.features[:4] %}
+
+                <li>
+                    ✦ {{ feature }}
+                </li>
+
+                {% endfor %}
+
+            </ul>
+
+
+            <div class="price">
+
+                {{ p.price }} ₽
+
+            </div>
+
+
+            <a
+                class="buy-btn"
+                href="/product/{{ p.id }}"
+            >
+
+                ПОДРОБНЕЕ
+
+            </a>
+
+
+        </article>
+
+
+        {% endfor %}
+
+
+    </div>
+
+
+</section>
+
+
+
+<!-- ========================= -->
+<!-- ВАЛЮТА -->
+<!-- ========================= -->
+
+<section class="section">
+
+
+    <div class="section-title">
+
+        <span>02</span>
+
+        <h2>
+            ИГРОВАЯ ВАЛЮТА
+        </h2>
+
+    </div>
+
+
+
+    <div class="grid money-grid">
+
+
+        {% for p in currency %}
+
+
+        <article class="card money">
+
+
+            {% if p.discount %}
+
+            <div class="discount">
+
+                ВЫГОДА {{ p.discount }}%
+
+            </div>
+
+            {% endif %}
+
+
+            <div class="coin">
+                ◎
+            </div>
+
+
+            <h3>
+                {{ p.name }}
+            </h3>
+
+
+            <p>
+                {{ p.description }}
+            </p>
+
+
+            <div class="price">
+
+                {{ p.price }} ₽
+
+            </div>
+
+
+            <a
+                class="buy-btn"
+                href="/product/{{ p.id }}"
+            >
+
+                КУПИТЬ
+
+            </a>
+
+
+        </article>
+
+
+        {% endfor %}
+
+
+    </div>
+
+
+</section>
+
+
+
+<!-- ========================= -->
+<!-- КАК РАБОТАЕТ -->
+<!-- ========================= -->
+
+<section class="how">
+
+
+    <h2>
+        КАК ЭТО РАБОТАЕТ?
+    </h2>
+
+
+    <div class="steps">
+
+
+        <div>
+
+            <b>01</b>
+
+            <h3>
+                Выбери товар
+            </h3>
+
+            <p>
+                Открой нужную привилегию
+                или пакет монет.
+            </p>
+
+        </div>
+
+
+        <div>
+
+            <b>02</b>
+
+            <h3>
+                Укажи ник
+            </h3>
+
+            <p>
+                Введи свой игровой ник
+                без ошибок.
+            </p>
+
+        </div>
+
+
+        <div>
+
+            <b>03</b>
+
+            <h3>
+                Оплати
+            </h3>
+
+            <p>
+                После подключения оплаты
+                ты перейдёшь к защищённой
+                оплате.
+            </p>
+
+        </div>
+
+
+        <div>
+
+            <b>04</b>
+
+            <h3>
+                Получи покупку
+            </h3>
+
+            <p>
+                Покупка будет автоматически
+                выдана на сервере.
+            </p>
+
+        </div>
+
+
+    </div>
+
+
+</section>
+
+
+</main>
+
+
+
+<footer>
+
+    © 2026 ЭЛДОРИЯ · МАГАЗИН СЕРВЕРА
+
+</footer>
+
+
+</body>
+
+</html>
