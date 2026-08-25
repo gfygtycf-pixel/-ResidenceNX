@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Заказы — Элдория
+    </title>
+
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+
+<div class="product-page">
+
+
+    <a
+        class="back"
+        href="/"
+    >
+
+        ← МАГАЗИН
+
+    </a>
+
+
+    <h1>
+        ТЕСТОВЫЕ ЗАКАЗЫ
+    </h1>
+
+
+    <div class="orders">
+
+
+        {% for order in orders %}
+
+
+        <div class="order">
+
+
+            <b>
+                #{{ order.id }}
+            </b>
+
+
+            · Ник:
+            <b>
+                {{ order.nick }}
+            </b>
+
+
+            · Товар:
+            {{ order.product }}
+
+
+            · Сумма:
+            {{ order.amount }} ₽
+
+
+            · Статус:
+            {{ order.status }}
+
+
+            ·
+            {{ order.created_at }}
+
+
+        </div>
+
+
+        {% else %}
+
+
+        <p>
+            Заказов пока нет.
+        </p>
+
+
+        {% endfor %}
+
+
+    </div>
+
+
+</div>
+
+
+</body>
+
+</html>
