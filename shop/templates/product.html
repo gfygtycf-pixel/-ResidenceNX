@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {{ product.name }} — Элдория
+    </title>
+
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+
+<div class="product-page">
+
+
+    <a
+        class="back"
+        href="/"
+    >
+
+        ← В МАГАЗИН
+
+    </a>
+
+
+
+    <article class="product-card">
+
+
+        <div class="tag">
+            ЭЛДОРИЯ
+        </div>
+
+
+        <h1>
+            {{ product.name }}
+        </h1>
+
+
+        <p class="lead">
+            {{ product.description }}
+        </p>
+
+
+
+        <h2>
+            ЧТО ВХОДИТ
+        </h2>
+
+
+        <ul class="big-list">
+
+
+            {% for feature in product.features %}
+
+            <li>
+                ✦ {{ feature }}
+            </li>
+
+            {% endfor %}
+
+
+        </ul>
+
+
+
+        {% if product.kit %}
+
+
+        <h2>
+            ЕЖЕДНЕВНЫЙ НАБОР
+        </h2>
+
+
+        <ul class="big-list">
+
+
+            {% for item in product.kit %}
+
+            <li>
+                ✦ {{ item }}
+            </li>
+
+            {% endfor %}
+
+
+        </ul>
+
+
+        {% endif %}
+
+
+
+        <div class="buy-area">
+
+
+            <div class="price">
+
+                {{ product.price }} ₽
+
+            </div>
+
+
+
+            <input
+                id="nick"
+                type="text"
+                maxlength="32"
+                placeholder="Твой игровой ник"
+                autocomplete="off"
+            >
+
+
+            <button
+                class="gold-btn"
+                onclick="createOrder()"
+            >
+
+                СОЗДАТЬ ТЕСТОВЫЙ ЗАКАЗ
+
+            </button>
+
+
+            <small>
+
+                Сейчас включён тестовый режим.
+                Реальная оплата пока не подключена.
+
+            </small>
+
+
+            <div id="result"></div>
+
+
+        </div>
+
+
+    </article>
+
+
+</div>
+
+
+
+<script>
+
+
+async function createOrder() {
+
+
+    const nick =
+        document
+        .getElementById("nick")
+        .value
+        .trim();
+
+
+    const result =
+        document
+        .getElementById("result");
+
+
+    if (!nick) {
+
+        result.textContent =
+            "Введи игровой ник.";
+
+        return;
+
+    }
+
+
+    try {
+
+
+        const response =
+            await fetch(
+                "/api/test-order",
+                {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        nick: nick,
+
+                        product:
+                            "{{ product.id }}"
+
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (data.ok) {
+
+            result.textContent =
+                "Заказ №"
+                + data.order_id
+                + " создан. "
+                + "Это тест — деньги "
+                + "не списываются.";
+
+        }
+
+        else {
+
+            result.textContent =
+                data.error;
+
+        }
+
+
+    }
+
+    catch (error) {
+
+        result.textContent =
+            "Ошибка соединения.";
+
+        console.error(error);
+
+    }
+
+}
+
+
+</script>
+
+
+</body>
+
+</html>
