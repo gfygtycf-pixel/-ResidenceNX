@@ -1,0 +1,25 @@
+name: RTP
+main: me.eldoria.rtp.Main
+version: 1.0.0
+api:
+  - "1.1.0"
+
+author: Eldoria
+description: Safe random teleportation plugin for Nukkit-MOT
+
+commands:
+
+  rtp:
+    description: Teleport to a random safe location
+    usage: "/rtp [reload]"
+    permission: rtp.use
+
+permissions:
+
+  rtp.use:
+    description: Use random teleportation
+    default: true
+
+  rtp.admin:
+    description: Reload RTP configuration
+    default: op
