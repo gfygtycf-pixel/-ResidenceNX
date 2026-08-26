@@ -1,0 +1,45 @@
+name: TopStats
+main: me.eldoria.topstats.Main
+version: 1.0.0
+api:
+  - "1.1.0"
+
+author: Eldoria
+description: Kill, death and K/D statistics with holograms
+
+commands:
+
+  stats:
+    description: Show player statistics
+    usage: "/stats [player]"
+    permission: topstats.command
+
+  topkills:
+    description: Show top players by kills
+    usage: "/topkills"
+    permission: topstats.command
+
+  topdeaths:
+    description: Show top players by deaths
+    usage: "/topdeaths"
+    permission: topstats.command
+
+  topkd:
+    description: Show top players by K/D
+    usage: "/topkd"
+    permission: topstats.command
+
+  topholo:
+    description: Manage TopStats holograms
+    usage: "/topholo <create|remove|reload> <kills|deaths|kd>"
+    permission: topstats.admin
+
+permissions:
+
+  topstats.command:
+    description: Access to TopStats commands
+    default: true
+
+  topstats.admin:
+    description: Manage TopStats holograms
+    default: op
